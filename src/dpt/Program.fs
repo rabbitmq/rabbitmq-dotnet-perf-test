@@ -105,10 +105,13 @@ let startConsumer (s: Scenario) (cf: ConnectionFactory) key =
     let c = cf.CreateConnection()
     let m = c.CreateModel()
     let q = prepareQueue m "direct" key
-    consume s m q (fun tag _ _ -> if not s.AutoAck then
-                                    m.BasicAck (tag, false))
+    consume s m q (fun tag _ body ->
+        let recvTicks = DateTime.UtcNow.Ticks
+        let sentTicks = BitConverter.ToInt64(body, 4)
+        s.Stats.HandleReceive(recvTicks - sentTicks)
+        if not s.AutoAck then m.BasicAck (tag, false))
 
-let startProducer (s: Scenario) (cf: ConnectionFactory) key bodyGen =
+let startProducer (s : Scenario) (cf: ConnectionFactory) key bodyGen =
     let c = cf.CreateConnection()
     let m = c.CreateModel()
     let bp = m.CreateBasicProperties()
@@ -145,11 +148,9 @@ let run (s : Scenario) =
 
 [<EntryPoint>]
 let main argv =
-    printfn "%A" argv
     let result = parser.ParseCommandLine argv
     let all = result.GetAllResults()
     let scenario = Scenario.parse all
-    (* printfn "%A" () *)
     run scenario |> ignore
     Console.ReadLine() |> ignore
-    0 // return an integer exit code
+    0
