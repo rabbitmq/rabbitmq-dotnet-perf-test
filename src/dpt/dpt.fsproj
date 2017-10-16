@@ -1,7 +1,7 @@
-﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeIdentifiers>win7-x64;osx.10.10-x64;debian.8-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <ItemGroup>
@@ -11,8 +11,6 @@
   <ItemGroup>
     <PackageReference Include="App.Metrics" Version="2.0.0-alpha" />
     <PackageReference Include="Argu" Version="3.7.0" />
-    <PackageReference Include="FSharp.Core" Version="4.1.*" />
-    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
     <PackageReference Include="RabbitMQ.Client" Version="5.0.1" />
   </ItemGroup>
 </Project>

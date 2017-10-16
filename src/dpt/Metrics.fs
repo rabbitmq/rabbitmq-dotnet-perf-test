@@ -7,7 +7,7 @@ open App.Metrics.Histogram
 
 type Stats (id: string, interval : int) =
     let time () = DateTime.Now.Ticks
-    let metrics = (new MetricsBuilder()).Build()
+    let metrics = (MetricsBuilder()).Build()
 
     let startTime =  time()
     let mutable lastStatTime = 0L
@@ -21,7 +21,7 @@ type Stats (id: string, interval : int) =
 
     let locker = obj()
     let div = TimeSpan.TicksPerMillisecond / 1000L
-    let latencyOpts = new HistogramOptions (Name = "Latency")
+    let latencyOpts = HistogramOptions (Name = "Latency")
 
     let resetInterval n =
         metrics.Manage.Reset()
@@ -33,7 +33,7 @@ type Stats (id: string, interval : int) =
         Interlocked.Exchange(&maxLatency, 0L) |> ignore
 
     let reportInterval () =
-        let sw = new Diagnostics.Stopwatch()
+        let sw = Diagnostics.Stopwatch()
         sw.Start()
         let now = time ()
         let elapsed = TimeSpan (now - lastStatTime)
