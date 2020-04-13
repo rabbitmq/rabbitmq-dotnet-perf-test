@@ -1,6 +1,4 @@
-MKDIR_P := mkdir -p
-
-DPT := ./src/dpt/dpt.fsproj
+DPT := ./src/dpt.fsproj
 
 VERSION := 0.1.0
 

@@ -124,7 +124,7 @@ let startConsumer (s: Scenario) (cf: ConnectionFactory) key =
     let q = prepareQueue m s key
     consume s m q (fun tag _ body ->
         let recvTicks = DateTime.UtcNow.Ticks
-        let sentTicks = BitConverter.ToInt64(body, 4)
+        let sentTicks = BitConverter.ToInt64(body.ToArray(), 4)
         s.Stats.HandleReceive(recvTicks - sentTicks)
         if not s.AutoAck then m.BasicAck (tag, false))
 
@@ -136,7 +136,8 @@ let startProducer (s : Scenario) (cf: ConnectionFactory) key bodyGen =
     let stats = s.Stats
     async {
         while true do
-            m.BasicPublish (s.Exchange, key, bp, bodyGen seqNum)
+            let body = new ReadOnlyMemory<byte>(bodyGen(seqNum))
+            m.BasicPublish (s.Exchange, key, bp, body)
             stats.HandleSend ()
             seqNum <- seqNum + 1 }
     |> Async.Start
